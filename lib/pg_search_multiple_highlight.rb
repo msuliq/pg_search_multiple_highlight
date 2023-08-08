@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
-require_relative "pg_search_multiple_highlight/version"
-
-module PgSearchMultipleHighlight
-  class Error < StandardError; end
-  # Your code goes here...
-end
+require "pg_search"
+require_relative "pg_search_highlight/version"
+require_relative "pg_search_highlight/error"
+require_relative "pg_search_highlight/tsearch"
+require_relative "pg_search_highlight/scope_options"
