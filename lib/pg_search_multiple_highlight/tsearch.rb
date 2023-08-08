@@ -10,6 +10,10 @@ module PgSearch
       end
 
       def multiple_highlight
+        config = @normalizer.instance_variable_get(:@config)
+
+        against_columns = config.instance_variable_get(:@options)[:against].keys
+
         @model.search(query).map do |result|
           highlighted_fields = {
             id: result.id
@@ -25,6 +29,12 @@ module PgSearch
       def highlight_multiple_fields(text, query)
         tsquery = ActiveRecord::Base.connection.quote(query)
 
+        dictionary = @options[:dictionary] || "simple"
+
+        raw_options = @options[:multiple_highlight]
+
+        scope_options = raw_options.map { |key, value| "#{key}=#{value}" }.join(", ")
+
         sanitized_sql = ActiveRecord::Base.send(
           :sanitize_sql_array, [
             "SELECT ts_headline(
@@ -36,22 +46,6 @@ module PgSearch
         )
         ActiveRecord::Base.connection.execute(sanitized_sql).first["highlighted_text"]
       end
-    end
-
-    def against_columns
-      config = @normalizer.instance_variable_get(:@config)
-
-      config.instance_variable_get(:@options)[:against].keys
-    end
-
-    def dictionary
-      @options[:dictionary] || "simple"
-    end
-
-    def scope_options
-      raw_options = @options[:multiple_highlight]
-
-      raw_options.map { |key, value| "#{key}=#{value}" }.join(", ")
     end
   end
 end
