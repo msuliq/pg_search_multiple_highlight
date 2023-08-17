@@ -1,16 +1,34 @@
 # frozen_string_literal: true
 
-source 'https://rubygems.org'
+source "https://rubygems.org"
 
-# Specify your gem's dependencies in pg_search_multiple_highlight.gemspec
+# Specify your gem"s dependencies in pg_search_multiple_highlight.gemspec
 gemspec
 
+if ENV["ACTIVE_RECORD_BRANCH"]
+  gem "activerecord", git: "https://github.com/rails/rails.git", branch: ENV.fetch("ACTIVE_RECORD_BRANCH", nil)
+  gem "arel", git: "https://github.com/rails/arel.git" if ENV.fetch("ACTIVE_RECORD_BRANCH", nil) == "master"
+end
+
+gem "activerecord-jdbcpostgresql-adapter", ">= 1.3.1", platform: :jruby
+gem "bundle-audit", "~> 0.1.0"
+gem "pg", ">= 0.21.0", platform: :ruby
+gem "rake", "~> 13.0"
+gem "rubocop", "~> 1.21"
+gem "rubocop-performance"
+gem "rubocop-rails"
+gem "rubocop-rake"
+gem "rubocop-minitest"
+
 group :development, :test do
-  gem 'bundle-audit', '~> 0.1.0'
-  gem 'database_cleaner'
-  gem 'minitest', '~> 5.0'
-  gem 'rake', '~> 13.0'
-  gem 'rubocop', '~> 1.21'
-  gem 'single_cov', '~> 1.9'
-  gem 'sqlite3', platforms: %i[mri mingw x64_mingw]
+  gem "byebug"
+  gem "database_cleaner"
+  gem "minitest", "~> 5.0"
+  gem "single_cov", "~> 1.9"
+  gem "simplecov"
+  gem "simplecov-lcov"
+  gem "standard", ">= 1.23.0"
+  gem "undercover"
+  gem "warning"
+  gem "with_model"
 end
