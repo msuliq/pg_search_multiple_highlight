@@ -6,7 +6,7 @@ module PgSearch
     # Extends class to enable multiple_ighlight method for the search results
     class TSearch < Feature
       def self.valid_options
-        super + %i[multiple_highlight]
+        super + %i[dictionary prefix negation any_word normalization tsvector_column highlight multiple_highlight]
       end
 
       def multiple_highlight
