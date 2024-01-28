@@ -27,24 +27,11 @@ module PgSearch
       end
 
       def highlight_multiple_fields(text, query)
-        tsquery = ActiveRecord::Base.connection.quote(query)
+        split_words = query.split(/\s+/).map { |word| Regexp.escape(word) }
 
-        dictionary = @options[:dictionary] || "simple"
+        regex = Regexp.new("\\b(#{split_words.join("|")})\\b", Regexp::IGNORECASE)
 
-        raw_options = @options[:multiple_highlight]
-
-        scope_options = raw_options.map { |key, value| "#{key}=#{value}" }.join(", ")
-
-        sanitized_sql = ActiveRecord::Base.send(
-          :sanitize_sql_array, [
-            "SELECT ts_headline(
-              ?, to_tsquery('#{dictionary}', ?),
-              '#{scope_options}'
-              ) AS highlighted_text",
-            text, tsquery
-          ]
-        )
-        ActiveRecord::Base.connection.execute(sanitized_sql).first["highlighted_text"]
+        text.gsub(regex) { |match| "<mark>#{match}</mark>" }
       end
     end
   end
